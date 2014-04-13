@@ -60,7 +60,7 @@ restart = -> {
                   case str.rstrip.to_sym
                   when :Y, :y
                     lines.clear; 4.times { lines << [nil, nil, nil, nil] }
-                    new_num.call
+                    $score = 0; new_num.call
                     break
                   when :N, :n; exit; end
                 end
