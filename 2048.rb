@@ -19,6 +19,7 @@ puts "└───┴───┴───┴───┘"
 =end
 
 $score = 0
+$changed = false
 
 lines  = []; 4.times { lines << [nil, nil, nil, nil] }
 
@@ -84,15 +85,15 @@ refresh = -> { score.call; header.call; lines.each {|l| liner.call l }; footer.c
 
 complement = -> l {
                     if l.size < 4
-                      size = l.size
+                      # size = l.size
                       (4 - l.size).times { l << nil }
-                      return size
+                      # return size
                     end
-                    return 4
+                    # return 4
                   }
 
-arrange = -> line, size {
-                          case size
+arrange = -> line {#, size {
+                          case line.size
                           # when 0, 1
                           when 2
                             if line[0] == line[1]
@@ -127,8 +128,9 @@ process = -> args {
                     rows.each do |row|
                       row.reverse! if args[1]
                       row.compact!
-                      size = complement.call row
-                      arrange.call row, size
+                      # size = complement.call row
+                      arrange.call row#, size
+                      complement.call row
                       row.reverse! if args[1]
                       4.times { |i| lines[3][i], lines[2][i], lines[1][i], lines[0][i] = rows[i] } unless args[0]
                     end
@@ -150,6 +152,7 @@ game = -> {
             start.call
             loop do
               $nums  = 0
+              image = []; lines.each { |l| image << l.clone }
               refresh.call
               str = gets
               case str.rstrip.to_sym
@@ -159,7 +162,7 @@ game = -> {
               when :w; up.call;
               else next; end
               check.call
-              new_num.call
+              new_num.call if image != lines
             end
           }
 
