@@ -1,46 +1,46 @@
 =begin
-puts "┌───────────────┐"
-puts "│ Use your keyborad.           │"
-puts "│ W: Up A:Left S:Down D:Right  │"
-puts "│ Return: Next step            │"
-puts "└───────────────┘"
-puts "┌───────────────┐"
-puts "│Score:        0000000000000000│"
-puts "└───────────────┘"
-puts "┌───┬───┬───┬───┐"
-puts "│____2_│____2_│____2_│____2_│"
-puts "├───┼───┼───┼───┤"
-puts "│____2_│____2_│____2_│____2_│"
-puts "├───┼───┼───┼───┤"
-puts "│____2_│____2_│____2_│____2_│"
-puts "├───┼───┼───┼───┤"
-puts "│_2048_│____2_│____2_│____2_│"
-puts "└───┴───┴───┴───┘"
+puts "#------------------------------#"
+puts "| Use your keyborad.           |"
+puts "| W: Up A:Left S:Down D:Right  |"
+puts "| Return: Next step            |"
+puts "#------------------------------#"
+puts "#------------------------------#"
+puts "|Score:        0000000000000000|"
+puts "#------------------------------#"
+puts "#------+------+------+------#"
+puts "|____2_|____2_|____2_|____2_|"
+puts "├------+------+------+------┤"
+puts "|____2_|____2_|____2_|____2_|"
+puts "├------+------+------+------┤"
+puts "|____2_|____2_|____2_|____2_|"
+puts "├------+------+------+------┤"
+puts "|_2048_|____2_|____2_|____2_|"
+puts "#------+------+------+------#"
 =end
 
 $score = 0
 $changed = false
 
-lines  = []; 4.times { lines << [nil, nil, nil, nil] }
+lines = []; 4.times { lines << [nil, nil, nil, nil] }
 
 helper        = -> {
-                      puts "┌───────────────┐"
-                      puts "│ Use your keyborad.           │"
-                      puts "│ W: Up A:Left S:Down D:Right  │"
-                      puts "│ Return: Next step            │"
-                      puts "└───────────────┘"
+                      puts "#------------------------------#"
+                      puts "| Use your keyborad.           |"
+                      puts "| W: Up A:Left S:Down D:Right  |"
+                      puts "| Return: Next step            |"
+                      puts "#------------------------------#"
                     }
 
 score         = -> {
-                      puts "┌───────────────┐"
-                      puts "│Score:        #{"%016d" % $score}│"
-                      puts "└───────────────┘"
+                      puts "#------------------------------#"
+                      puts "|Score:        #{"%016d" % $score}|"
+                      puts "#------------------------------#"
                     }
 
-header        = -> { puts "┌───┬───┬───┬───┐" }
-block         = -> n { "_#{"_" * (4 - n.to_s.length)}#{n}_│" }
-liner         = -> a { s = "│" ; a.each {|i| s += block.call i }; puts s}
-footer        = -> { puts "└───┴───┴───┴───┘" }
+header        = -> { puts "#------+------+------+------#" }
+block         = -> n { "_#{"_" * (4 - n.to_s.length)}#{n}_|" }
+liner         = -> a { puts a.inject("|") {|m, i| m + block.call(i) }}
+footer        = -> { puts "#------+------+------+------#" }
 
 new_num = -> {
                 loop do
@@ -68,55 +68,48 @@ restart = -> {
               }
 
 game_over     = -> {
-                      puts "┌───────────────┐"
-                      puts "│          Game Over!          │"
-                      puts "└───────────────┘"
+                      puts "#------------------------------#"
+                      puts "|          Game Over!          |"
+                      puts "#------------------------------#"
                       restart.call
                     }
 
 congrulations = -> {
-                      puts "┌───────────────┐"
-                      puts "│Congrulations!You've got 2048!│"
-                      puts "└───────────────┘"
+                      puts "#------------------------------#"
+                      puts "|Congrulations!You've got 2048!|"
+                      puts "#------------------------------#"
                       restart.call
                     }
 
 refresh = -> { score.call; header.call; lines.each {|l| liner.call l }; footer.call}
 
-complement = -> l {
-                    if l.size < 4
-                      # size = l.size
-                      (4 - l.size).times { l << nil }
-                      # return size
-                    end
-                    # return 4
-                  }
+complement = -> l { (4 - l.size).times { l << nil } if l.size < 4 }
 
-arrange = -> line {#, size {
-                          case line.size
-                          # when 0, 1
-                          when 2
-                            if line[0] == line[1]
-                              line[0] += line[1]; line[1] = nil; $score += line[0]
-                            end
-                          when 3
-                            if line[0] == line[1]
-                              line[0] += line[1]; line[1], line[2] = line[2], nil; $score += line[0]
-                            elsif line[1] == line[2]
-                              line[1] += line[2]; line[2] = nil; $score += line[1]
-                            end
-                          when 4
-                            if line[0] == line[1]
-                              line[0] += line[1]; line[1], line[2], line[3] = line[2], line[3], nil; $score += line[0]
-                            end
-                            if line[1] == line[2]
-                              line[1] += line[2]; line[2], line[3] = line[3], nil; $score += line[1]
-                            end
-                            if !line[2].nil? && line[2] == line[3]
-                              line[2] += line[3]; line[3] = nil; $score += line[2]
-                            end
-                          end
-                        }
+arrange = -> line {
+                    case line.size
+                    # when 0, 1
+                    when 2
+                      if line[0] == line[1]
+                        line[0] += line[1]; line[1] = nil; $score += line[0]
+                      end
+                    when 3
+                      if line[0] == line[1]
+                        line[0] += line[1]; line[1], line[2] = line[2], nil; $score += line[0]
+                      elsif line[1] == line[2]
+                        line[1] += line[2]; line[2] = nil; $score += line[1]
+                      end
+                    when 4
+                      if line[0] == line[1]
+                        line[0] += line[1]; line[1], line[2], line[3] = line[2], line[3], nil; $score += line[0]
+                      end
+                      if line[1] == line[2]
+                        line[1] += line[2]; line[2], line[3] = line[3], nil; $score += line[1]
+                      end
+                      if !line[2].nil? && line[2] == line[3]
+                        line[2] += line[3]; line[3] = nil; $score += line[2]
+                      end
+                    end
+                  }
 
 process = -> args {
                     rows = []
@@ -128,8 +121,7 @@ process = -> args {
                     rows.each do |row|
                       row.reverse! if args[1]
                       row.compact!
-                      # size = complement.call row
-                      arrange.call row#, size
+                      arrange.call row
                       complement.call row
                       row.reverse! if args[1]
                       4.times { |i| lines[3][i], lines[2][i], lines[1][i], lines[0][i] = rows[i] } unless args[0]
@@ -143,8 +135,7 @@ up    = -> { process.call [false,  true] }
 
 check = -> {
               lines.each { |l| l.each { |b| congrulations.call if b == 2048 } }
-              size = 0; lines.each { |line| size += line.compact.size }
-              game_over.call if size == 16
+              game_over.call if lines.inject(0) {|mem, line| mem + line.compact.size } == 16
             }
 
 game = -> {
